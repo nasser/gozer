@@ -1,0 +1,1 @@
+web: bundle exec ruby gozer.rb -p $PORT
