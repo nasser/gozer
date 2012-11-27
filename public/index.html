@@ -1,0 +1,44 @@
+<html>
+<head>
+  <title>Gozer</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="css/layout.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+
+  <script src="js/jquery.js"></script>
+  <script src="js/mustache.js"></script>
+
+  <script type="text/mustache" id="item">
+    <div class="sixteen columns item">
+      <h2><a href="{{source}}">{{author}} - {{date}}</a></h2>
+      <img src={{image}}>
+      <p>{{{content}}}</p>
+    </div>
+  </script>
+  <script type="text/javascript">
+    function decodeHtmlEntities(str) {
+      return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '\\"');
+    }
+
+    $(function() {
+      var item_template = $("#item").html();
+
+      $.getJSON("/", function(data) {
+        for (var i = data.length - 1; i >= 0; i--) {
+
+          for(x in data[i]) {
+            data[i][x] = decodeHtmlEntities(data[i][x]);
+          }
+
+          $(".container").prepend(Mustache.to_html(item_template, data[i]))
+        };
+      });
+
+    });
+  </script>
+</head>
+<body>
+  <div class="container"></div>
+</body>
+</html>
