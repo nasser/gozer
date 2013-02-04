@@ -1,10 +1,13 @@
-require "octokit"
+require "json"
+require "hashie"
+require "open-uri"
 
 module Gozer
   class Stream
     class Github < Stream
       def self.new user, project, branch="master"
-        super Octokit.commits("#{user}/#{project}", branch).map {|c|
+        JSON.parse(open("https://api.github.com/repos/#{user}/#{project}/commits").read).map {|c|
+          c = Hashie::Mash.new(c)
           i = Item.new Time.parse(c.commit.author.date)
 
           i.image = c.author.avatar_url
