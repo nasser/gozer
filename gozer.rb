@@ -13,9 +13,9 @@ require_relative "lib/tumblr/tumblr"
 
 def demo_stream
   stream = Gozer::Stream.new []
-  # stream += Gozer::Stream::Github.new "openFrameworks", "openFrameworks"
+  stream += Gozer::Stream::Github.new "openFrameworks", "openFrameworks"
   # stream += Gozer::Stream::Github.new "nasser", "zajal", "amsterdam"
-  # stream += Gozer::Stream::Atom.new "http://blog.nas.sr/rss"
+  stream += Gozer::Stream::Atom.new "http://blog.nas.sr/rss"
   Gozer::Stream::Tumblr.api_key = "zZjfj7R30K17nG35Nqw6OXAN3QMxHp31veEaf1frJ7xzIAqj3p"
   stream += Gozer::Stream::Tumblr.new "wearableweapons.tumblr.com"  
 
