@@ -12,13 +12,25 @@ require_relative "lib/github/github"
 require_relative "lib/tumblr/tumblr"
 
 def demo_stream
-  stream = Gozer::Stream.new []
-  stream += Gozer::Stream::Github.new "openFrameworks", "openFrameworks"
-  # stream += Gozer::Stream::Github.new "nasser", "zajal", "amsterdam"
-  stream += Gozer::Stream::Atom.new "http://blog.nas.sr/rss"
   Gozer::Stream::Tumblr.api_key = "zZjfj7R30K17nG35Nqw6OXAN3QMxHp31veEaf1frJ7xzIAqj3p"
-  stream += Gozer::Stream::Tumblr.new "wearableweapons.tumblr.com"  
 
+  stream = Gozer::Stream.new []
+  # toby
+  stream += Gozer::Stream::Github.new "electronicwhisper", "pixel-shaders"
+  stream += Gozer::Stream::Github.new "electronicwhisper", "arthackday-refractor"
+  stream += Gozer::Stream::Atom.new "http://journal.pixelshaders.com/rss"
+
+  # forrest
+  stream += Gozer::Stream::Atom.new "view-source:http://feeds.feedburner.com/meemoo?format=xml"
+  stream += Gozer::Stream::Github.new "meemoo", "iframework"
+  stream += Gozer::Stream::Github.new "meemoo", "dataflow"
+  # https://twitter.com/forresto #meemoo
+  stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com/"
+
+  # nordt
+  # http://twitter.com/lasersaur
+  stream += Gozer::Stream::Github.new "nortd", "bomfu"
+  
   stream
 end
 
