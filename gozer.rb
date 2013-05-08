@@ -21,16 +21,16 @@ def demo_stream
   stream += Gozer::Stream::Atom.new "http://journal.pixelshaders.com/rss"
 
   # forrest
-  stream += Gozer::Stream::Atom.new "view-source:http://feeds.feedburner.com/meemoo?format=xml"
+  stream += Gozer::Stream::Atom.new "http://feeds.feedburner.com/meemoo?format=xml"
   stream += Gozer::Stream::Github.new "meemoo", "iframework"
   stream += Gozer::Stream::Github.new "meemoo", "dataflow"
   # https://twitter.com/forresto #meemoo
-  stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com/"
+  stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com"
 
   # nordt
   # http://twitter.com/lasersaur
   stream += Gozer::Stream::Github.new "nortd", "bomfu"
-  
+
   stream
 end
 
