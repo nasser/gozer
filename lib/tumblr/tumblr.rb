@@ -15,11 +15,36 @@ module Gozer
           p = Hashie::Mash.new(p)
           i = Item.new Time.parse(p.date)
 
-          # i.image = p.author.avatar_url
-          # i.author = p.commit.author.name
           i.source = p.post_url
-          i.content = p.caption
           i.host = "tumblr"
+          i.type = p.type
+
+          case i.type
+          when 'text'
+            i.title = p.title
+            i.content = p.body
+          when 'photo'
+            i.content = p.caption
+            i.image = p.photos[0].original_size.url
+            # alt sizes?
+          when 'quote'
+            i.content = p.text
+            i.quote_source = p.source
+          when 'link'
+            i.content = p.description
+            i.title = p.title
+            i.url = p.url
+          when 'chat'
+            i.title = p.title
+            i.content = p.body
+          when 'audio'
+            i.content = p.caption
+            i.player = p.player
+          when 'video'
+            i.content = p.caption
+            i.player = p.player.last.embed_code
+            # alt sizes?
+          end
 
           i
         }
