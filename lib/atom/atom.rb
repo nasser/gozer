@@ -1,4 +1,5 @@
 require "simple-rss"
+require "open-uri"
 
 module Gozer
   class Stream
