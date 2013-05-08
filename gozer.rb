@@ -10,9 +10,16 @@ require_relative "lib/gozer/item"
 require_relative "lib/atom/atom"
 require_relative "lib/github/github"
 require_relative "lib/tumblr/tumblr"
+require_relative "lib/twitter/twitter"
 
 def demo_stream
-  Gozer::Stream::Tumblr.api_key = "zZjfj7R30K17nG35Nqw6OXAN3QMxHp31veEaf1frJ7xzIAqj3p"
+  Gozer::Stream::Tumblr.api_key = ENV['TUMBLR_API_KEY']
+  Gozer::Stream::Twitter.credentials = {
+    :consumer_key => ENV["TWITTER_CONSUMER_KEY"],
+    :consumer_secret => ENV["TWITTER_CONSUMER_SECRET"],
+    :oauth_token => ENV["TWITTER_OAUTH_TOKEN"],
+    :oauth_token_secret => ENV["TWITTER_OAUTH_TOKEN_SECRET"]
+  }
 
   stream = Gozer::Stream.new []
   # toby
@@ -24,11 +31,11 @@ def demo_stream
   stream += Gozer::Stream::Atom.new "http://feeds.feedburner.com/meemoo?format=xml"
   stream += Gozer::Stream::Github.new "meemoo", "iframework"
   stream += Gozer::Stream::Github.new "meemoo", "dataflow"
-  # https://twitter.com/forresto #meemoo
+  stream += Gozer::Stream::Twitter.new "forresto", ["meemoo"]
   stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com"
 
   # nordt
-  # http://twitter.com/lasersaur
+  stream += Gozer::Stream::Twitter.new "lasersaur"
   stream += Gozer::Stream::Github.new "nortd", "bomfu"
 
   stream
