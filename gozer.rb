@@ -26,21 +26,22 @@ def demo_stream
   }
 
   stream = Gozer::Stream.new []
-  # toby
-  stream += Gozer::Stream::Github.new "electronicwhisper", "pixel-shaders"
-  stream += Gozer::Stream::Github.new "electronicwhisper", "arthackday-refractor"
-  stream += Gozer::Stream::Atom.new "http://journal.pixelshaders.com/rss"
+  
+  toby = { artist:"Toby Schachman", project:"Pixel Shaders" }
+  stream += Gozer::Stream::Github.new "electronicwhisper", "pixel-shaders", "master", toby
+  stream += Gozer::Stream::Github.new "electronicwhisper", "arthackday-refractor", "master", toby
+  stream += Gozer::Stream::Atom.new "http://journal.pixelshaders.com/rss", toby
 
-  # forrest
-  stream += Gozer::Stream::Atom.new "http://feeds.feedburner.com/meemoo?format=xml"
-  stream += Gozer::Stream::Github.new "meemoo", "iframework"
-  stream += Gozer::Stream::Github.new "meemoo", "dataflow"
-  stream += Gozer::Stream::Twitter.new "forresto", ["meemoo"]
-  stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com"
+  forrest = { artist:"Forrest Oliphant", project:"Meemoo" }
+  stream += Gozer::Stream::Atom.new "http://feeds.feedburner.com/meemoo?format=xml", forrest
+  stream += Gozer::Stream::Github.new "meemoo", "iframework", "master", forrest
+  stream += Gozer::Stream::Github.new "meemoo", "dataflow", "master", forrest
+  stream += Gozer::Stream::Twitter.new "forresto", ["meemoo"], forrest
+  stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com", forrest
 
-  # nordt
-  stream += Gozer::Stream::Twitter.new "lasersaur"
-  stream += Gozer::Stream::Github.new "nortd", "bomfu"
+  nortd = { artist:"Nortd Labs", project:"Bomfu" }
+  stream += Gozer::Stream::Twitter.new "lasersaur", [], nortd
+  stream += Gozer::Stream::Github.new "nortd", "bomfu", "master", nortd
 
   stream
 end
@@ -51,6 +52,7 @@ end
 
 get "/demo.json" do
   content_type 'application/json'
+  
   demo_stream.to_json
 end
 

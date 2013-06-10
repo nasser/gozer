@@ -13,7 +13,7 @@ module Gozer
         attr_accessor :credentials
       end
 
-      def self.new handle, tags=[]
+      def self.new handle, tags=[], extra={}
         twitter = ::Twitter::Client.new Twitter.credentials
         twitter.user_timeline(handle, count:100).map do |t|
           next if not tags.empty? and not t.hashtags.any? { |h| tags.include? h.text }
@@ -24,6 +24,8 @@ module Gozer
           i.author = t.user.name
           i.image = t.user.profile_image_url
           i.source = "http://twitter.com/_/status/#{t.id}" # hack
+
+          i.merge! extra
 
           i
         end.compact

@@ -21,6 +21,8 @@ module Gozer
           i.content = c.commit.message
           i.host = "github"
 
+          i.merge! extra
+
           i
         }
       end

@@ -9,7 +9,7 @@ module Gozer
         attr_accessor :api_key
       end
 
-      def self.new blog_url
+      def self.new blog_url, extra={}
         api_url = "http://api.tumblr.com/v2/blog/#{blog_url}/posts?api_key=#{Tumblr.api_key}"
         JSON.parse(open(api_url).read)['response']['posts'].map { |p|
           p = Hashie::Mash.new(p)
@@ -45,6 +45,8 @@ module Gozer
             i.player = p.player.last.embed_code
             # alt sizes?
           end
+
+          i.merge! extra
 
           i
         }

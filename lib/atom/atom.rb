@@ -4,7 +4,7 @@ require "open-uri"
 module Gozer
   class Stream
     class Atom < Stream
-      def self.new url
+      def self.new url, extra={}
         feed = SimpleRSS.parse open(url)
 
         super feed.items.map { |e|
@@ -18,6 +18,8 @@ module Gozer
           i.content = e.content if e.content
           i.content = e.description if e.description
           i.host = url
+
+          i.merge! extra
 
           i
         }
