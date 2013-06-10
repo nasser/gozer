@@ -20,6 +20,10 @@ def demo_stream
     :oauth_token => ENV["TWITTER_OAUTH_TOKEN"],
     :oauth_token_secret => ENV["TWITTER_OAUTH_TOKEN_SECRET"]
   }
+  Gozer::Stream::Github.credentials = {
+    :client_id => ENV["GITHUB_CLIENT_ID"],
+    :client_secret => ENV["GITHUB_CLIENT_SECRET"]
+  }
 
   stream = Gozer::Stream.new []
   # toby

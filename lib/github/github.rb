@@ -5,8 +5,12 @@ require "open-uri"
 module Gozer
   class Stream
     class Github < Stream
-      def self.new user, project, branch="master"
-        api_url = "https://api.github.com/repos/#{user}/#{project}/commits"
+      class << self
+        attr_accessor :credentials
+      end
+
+      def self.new user, project, branch="master", extra={}
+        api_url = "https://api.github.com/repos/#{user}/#{project}/commits?client_id=#{Github.credentials[:client_id]}&client_secret=#{Github.credentials[:client_secret]}"
         JSON.parse(open(api_url).read).map {|c|
           c = Hashie::Mash.new(c)
           i = Item.new Time.parse(c.commit.author.date)
