@@ -23,6 +23,7 @@ module Gozer
           i.content = t.text
           i.author = t.user.name
           i.image = t.user.profile_image_url
+          i.source = "http://twitter.com/_/status/#{t.id}" # hack
 
           i
         end.compact
