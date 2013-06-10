@@ -24,6 +24,7 @@ module Gozer
           i.author = t.user.name
           i.image = t.user.profile_image_url
           i.source = "http://twitter.com/_/status/#{t.id}" # hack
+          i.host = 'twitter'
 
           i.merge! extra
 

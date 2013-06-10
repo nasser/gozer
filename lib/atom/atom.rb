@@ -17,7 +17,7 @@ module Gozer
           i.source = e.link if e.link
           i.content = e.content if e.content
           i.content = e.description if e.description
-          i.host = url
+          i.host = 'rss'
 
           i.merge! extra
 
