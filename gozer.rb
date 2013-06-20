@@ -46,6 +46,11 @@ def demo_stream
   stream
 end
 
+before do
+  headers["Access-Control-Allow-Origin"] = "*"
+  headers["Access-Control-Allow-Methods"] = "*"
+end
+
 get "/" do
   erb :index
 end
