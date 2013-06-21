@@ -12,7 +12,7 @@ require_relative "lib/github/github"
 require_relative "lib/tumblr/tumblr"
 require_relative "lib/twitter/twitter"
 
-def demo_stream
+def demo_stream!
   Gozer::Stream::Tumblr.api_key = ENV['TUMBLR_API_KEY']
   Gozer::Stream::Twitter.credentials = {
     :consumer_key => ENV["TWITTER_CONSUMER_KEY"],
@@ -55,16 +55,42 @@ get "/" do
   erb :index
 end
 
+def demo_stream options={}
+  options["cache_time"] ||= 3600
+  options["page"] ||= nil
+  options["items_per_page"] ||= 25
+
+  p options
+
+  @@last_update ||= nil
+  @@cached_stream ||= nil
+
+  if @@last_update.nil? or (Time.now - @@last_update > options["cache_time"].to_i)
+    @@cached_stream = demo_stream!
+    @@last_update = Time.now
+  end
+
+  if options["page"]
+    page = options["page"].to_i
+    ipp = options["items_per_page"].to_i
+    @@cached_stream[(page*ipp)...(page*ipp+ipp)]
+
+  else
+    @@cached_stream
+
+  end.to_json
+end
+
 get "/demo.json" do
   content_type 'application/json'
-  
-  demo_stream.to_json
+
+  demo_stream(params).to_json
 end
 
 get "/demo.html" do
   content_type 'text/html'
 
-  demo_stream.map do |item|
+  demo_stream(params).map do |item|
     "<div class='stream-item' id='item-#{item.object_id}'>" +
     item.keys.map do |key| 
       "<span class='#{key}'>#{item[key]}</span>"
