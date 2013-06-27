@@ -12,7 +12,10 @@ require_relative "lib/github/github"
 require_relative "lib/tumblr/tumblr"
 require_relative "lib/twitter/twitter"
 
-def demo_stream!
+before do
+  headers["Access-Control-Allow-Origin"] = "*"
+  headers["Access-Control-Allow-Methods"] = "*"
+
   Gozer::Stream::Tumblr.api_key = ENV['TUMBLR_API_KEY']
   Gozer::Stream::Twitter.credentials = {
     :consumer_key => ENV["TWITTER_CONSUMER_KEY"],
@@ -24,7 +27,9 @@ def demo_stream!
     :client_id => ENV["GITHUB_CLIENT_ID"],
     :client_secret => ENV["GITHUB_CLIENT_SECRET"]
   }
+end
 
+def demo_stream!
   stream = Gozer::Stream.new []
   
   toby = { artist:"Toby Schachman", project:"Pixel Shaders" }
@@ -44,11 +49,6 @@ def demo_stream!
   stream += Gozer::Stream::Github.new "nortd", "bomfu", "master", nortd
 
   stream
-end
-
-before do
-  headers["Access-Control-Allow-Origin"] = "*"
-  headers["Access-Control-Allow-Methods"] = "*"
 end
 
 get "/" do
