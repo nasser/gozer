@@ -29,24 +29,39 @@ before do
   }
 end
 
+class Gozer::Stream
+  def add_artist name
+    stream = self
+
+    case name
+    when :toby
+      toby = { artist:"Toby Schachman", project:"Pixel Shaders" }
+      stream += Gozer::Stream::Github.new "electronicwhisper", "pixel-shaders", "master", toby
+      stream += Gozer::Stream::Github.new "electronicwhisper", "arthackday-refractor", "master", toby
+      stream += Gozer::Stream::Atom.new "http://journal.pixelshaders.com/rss", toby
+    when :forrest
+      forrest = { artist:"Forrest Oliphant", project:"Meemoo" }
+      stream += Gozer::Stream::Atom.new "http://feeds.feedburner.com/meemoo?format=xml", forrest
+      stream += Gozer::Stream::Github.new "meemoo", "iframework", "master", forrest
+      stream += Gozer::Stream::Github.new "meemoo", "dataflow", "master", forrest
+      stream += Gozer::Stream::Twitter.new "forresto", ["meemoo"], forrest
+      stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com", forrest
+    when :nortd
+      nortd = { artist:"Nortd Labs", project:"Bomfu" }
+      stream += Gozer::Stream::Twitter.new "lasersaur", [], nortd
+      stream += Gozer::Stream::Github.new "nortd", "bomfu", "master", nortd
+    end
+
+    stream
+  end
+end
+
 def demo_stream!
   stream = Gozer::Stream.new []
-  
-  toby = { artist:"Toby Schachman", project:"Pixel Shaders" }
-  stream += Gozer::Stream::Github.new "electronicwhisper", "pixel-shaders", "master", toby
-  stream += Gozer::Stream::Github.new "electronicwhisper", "arthackday-refractor", "master", toby
-  stream += Gozer::Stream::Atom.new "http://journal.pixelshaders.com/rss", toby
 
-  forrest = { artist:"Forrest Oliphant", project:"Meemoo" }
-  stream += Gozer::Stream::Atom.new "http://feeds.feedburner.com/meemoo?format=xml", forrest
-  stream += Gozer::Stream::Github.new "meemoo", "iframework", "master", forrest
-  stream += Gozer::Stream::Github.new "meemoo", "dataflow", "master", forrest
-  stream += Gozer::Stream::Twitter.new "forresto", ["meemoo"], forrest
-  stream += Gozer::Stream::Tumblr.new "meemooapp.tumblr.com", forrest
-
-  nortd = { artist:"Nortd Labs", project:"Bomfu" }
-  stream += Gozer::Stream::Twitter.new "lasersaur", [], nortd
-  stream += Gozer::Stream::Github.new "nortd", "bomfu", "master", nortd
+  stream = stream.add_artist :toby
+  stream = stream.add_artist :forrest
+  stream = stream.add_artist :nortd
 
   stream
 end
@@ -56,13 +71,8 @@ get "/" do
 end
 
 def demo_stream options={}
-  options["cache_time"] ||= 3600
-  options["page"] ||= nil
-  options["items_per_page"] ||= 25
 
-  @@last_update ||= nil
-  @@cached_stream ||= nil
-
+  
   if @@last_update.nil? or (Time.now - @@last_update > options["cache_time"].to_i)
     @@cached_stream = demo_stream!
     @@last_update = Time.now
@@ -79,10 +89,46 @@ def demo_stream options={}
   end
 end
 
-get "/demo.json" do
+get "/*.json" do |name|
   content_type 'application/json'
 
-  demo_stream(params).to_json
+  params["cache_time"] ||= 3600
+  params["page"] ||= 0
+  params["items_per_page"] ||= nil
+
+  name = 'all' if name == 'demo'
+  name = name.to_sym
+
+  # caching
+  @@last_update ||= nil
+  @@cached_streams ||= {}
+
+  if @@cached_streams[name].nil? or @@last_update.nil? or (Time.now - @@last_update > params["cache_time"].to_i)
+    # cache miss or expired, update stream
+    stream = Gozer::Stream.new []
+
+    if name == :all
+      stream = stream.add_artist :toby
+      stream = stream.add_artist :forrest
+      stream = stream.add_artist :nortd
+    else
+      stream = stream.add_artist name
+    end
+
+    @@cached_streams[name] = stream
+    @@last_update = Time.now
+  end
+
+  # pagination
+  if params["items_per_page"]
+    page = params["page"].to_i
+    ipp = params["items_per_page"].to_i
+    @@cached_streams[name][(page*ipp)...(page*ipp+ipp)]
+
+  else
+    @@cached_streams[name]
+
+  end.to_json
 end
 
 get "/demo.html" do
