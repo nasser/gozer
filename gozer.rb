@@ -59,7 +59,6 @@ def demo_stream options={}
   options["cache_time"] ||= 3600
   options["page"] ||= nil
   options["items_per_page"] ||= 25
-  p options
 
   @@last_update ||= nil
   @@cached_stream ||= nil
