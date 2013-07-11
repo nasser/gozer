@@ -131,6 +131,15 @@ get "/*.json" do |name|
   end.to_json
 end
 
+get "/makes" do
+  content_type 'application/json'
+
+  stream = Gozer::Stream.new
+  stream += Gozer::Stream::Atom.new "http://fast-crag-2176.herokuapp.com/rss"
+  
+  stream.to_json
+end
+
 get "/demo.html" do
   content_type 'text/html'
 
