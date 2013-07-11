@@ -13,7 +13,7 @@ module Gozer
 
           i = Item.new date
           
-          i.author = e.author[/[\s\w]+\n/].strip if e.author
+          i.author = e.author[/[\s\w]+\n?/].strip if e.author
           i.source = e.link if e.link
           i.content = e.content if e.content
           i.content = e.description if e.description
