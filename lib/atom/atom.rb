@@ -1,6 +1,24 @@
 require "simple-rss"
 require "open-uri"
 
+# enclosure support hacked in
+class SimpleRSS
+  @@item_tags << :enclosure
+  def clean_content(tag, attrs, content)
+    content = content.to_s
+    case tag
+      when :pubDate, :lastBuildDate, :published, :updated, :expirationDate, :modified, :'dc:date'
+        Time.parse(content) rescue unescape(content)
+      when :author, :contributor, :skipHours, :skipDays
+        unescape(content.gsub(/<.*?>/,''))
+      when :enclosure
+        attrs[/url="([^"]+)"/, 1]
+      else
+        content.empty? && "#{attrs} " =~ /href=['"]?([^'"]*)['" ]/mi ? $1.strip : unescape(content)
+    end
+  end
+end
+
 module Gozer
   class Stream
     class Atom < Stream
